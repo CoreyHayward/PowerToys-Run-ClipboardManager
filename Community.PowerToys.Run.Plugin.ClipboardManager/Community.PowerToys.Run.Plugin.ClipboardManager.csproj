@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Community.PowerToys.Run.Plugin.ClipboardManager</RootNamespace>
+    <AssemblyName>Community.PowerToys.Run.Plugin.ClipboardManager</AssemblyName>
+    <Version>0.1.0</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <Platforms>x64;ARM64</Platforms>
+    <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
+	<EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+
+  <ItemGroup Condition="'$(Platform)' == 'x64'">
+    <Reference Include="Libs\x64\PowerToys.Common.UI.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\x64\PowerToys.ManagedCommon.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\x64\PowerToys.Settings.UI.Lib.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\x64\Wox.Infrastructure.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\x64\Wox.Plugin.dll">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Platform)' == 'ARM64'">
+	<Reference Include="Libs\ARM64\PowerToys.Common.UI.dll">
+	  <Private>False</Private>
+	</Reference>
+    <Reference Include="Libs\ARM64\PowerToys.ManagedCommon.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\ARM64\PowerToys.Settings.UI.Lib.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\ARM64\Wox.Infrastructure.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Libs\ARM64\Wox.Plugin.dll">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Images\ClipboardManager.dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\ClipboardManager.light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

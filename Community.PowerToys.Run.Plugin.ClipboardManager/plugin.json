@@ -1,0 +1,14 @@
+﻿{
+  "ID": "2d9351ea495848d98f4771c27ac211e4",
+  "ActionKeyword": "c:",
+  "IsGlobal": false,
+  "Name": "ClipboardManager",
+  "Author": "Corey Hayward",
+  "Version": "0.1.0",
+  "Language": "csharp",
+  "Website": "https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager",
+  "IcoPathDark": "Images\\ClipboardManager.dark.png",
+  "IcoPathLight": "Images\\ClipboardManager.light.png",
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.ClipboardManager.dll",
+  "DynamicLoading": true
+}
