@@ -4,7 +4,7 @@
   "IsGlobal": false,
   "Name": "ClipboardManager",
   "Author": "Corey Hayward",
-  "Version": "0.1.0",
+  "Version": "0.1.1",
   "Language": "csharp",
   "Website": "https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager",
   "IcoPathDark": "Images\\ClipboardManager.dark.png",

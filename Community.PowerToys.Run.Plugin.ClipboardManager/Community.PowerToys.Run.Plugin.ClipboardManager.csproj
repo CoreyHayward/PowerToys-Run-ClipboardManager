@@ -8,7 +8,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Community.PowerToys.Run.Plugin.ClipboardManager</RootNamespace>
     <AssemblyName>Community.PowerToys.Run.Plugin.ClipboardManager</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Platforms>x64;ARM64</Platforms>

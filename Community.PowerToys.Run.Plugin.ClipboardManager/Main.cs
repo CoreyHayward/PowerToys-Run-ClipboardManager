@@ -12,7 +12,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
     public class Main : IPlugin, ISettingProvider
     {
         private PluginInitContext _context;
-        private string _icon_path;
+        private string _iconPath;
         private int _beginTypeDelay;
 
         public string Name => "ClipboardManager";
@@ -74,8 +74,8 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             => new Result()
             {
                 Title = text.Trim(),
-                SubTitle = "Press Enter to paste this text.",
-                IcoPath = _icon_path,
+                SubTitle = "Paste this value.",
+                IcoPath = _iconPath,
                 Action = (context) =>
                 {
                     Clipboard.SetHistoryItemAsContent(item);
@@ -97,11 +97,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
         {
             if (theme == Theme.Light || theme == Theme.HighContrastWhite)
             {
-                _icon_path = "Images/ClipboardManager.light.png";
+                _iconPath = "Images/ClipboardManager.light.png";
             }
             else
             {
-                _icon_path = "Images/ClipboardManager.dark.png";
+                _iconPath = "Images/ClipboardManager.dark.png";
             }
         }
 
