@@ -45,11 +45,10 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
         public List<Result> Query(Query query)
         {
             var results = new List<Result>();
-
-            var historyResult = RunSync(async () => await Clipboard.GetHistoryItemsAsync());
+            var clipboardTextItems = GetTextItemsFromClipboardHistory();
             if (!string.IsNullOrWhiteSpace(query?.Search))
             {
-                foreach (var item in historyResult.Items)
+                foreach (var item in clipboardTextItems)
                 {
                     var text = RunSync(async () => await item.Content.GetTextAsync());
                     if (text.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
@@ -60,7 +59,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             }
             else
             {
-                foreach(var item in historyResult.Items.Take(5))
+                foreach (var item in clipboardTextItems.Take(5))
                 {
                     var text = RunSync(async () => await item.Content.GetTextAsync());
                     results.Add(CreateResult(item, text));
@@ -68,6 +67,13 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             }
 
             return results;
+        }
+
+        private List<ClipboardHistoryItem> GetTextItemsFromClipboardHistory()
+        {
+            var clipboardHistoryResult = RunSync(async () => await Clipboard.GetHistoryItemsAsync());
+            var clipboardTextItems = clipboardHistoryResult.Items.Where(x => x.Content.Contains(StandardDataFormats.Text)).ToList();
+            return clipboardTextItems;
         }
 
         private Result CreateResult(ClipboardHistoryItem item, string text) 
