@@ -3,17 +3,23 @@
 
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
+using Wox.Infrastructure;
 using Wox.Plugin;
 using Clipboard = Windows.ApplicationModel.DataTransfer.Clipboard;
 
 namespace Community.PowerToys.Run.Plugin.ClipboardManager
 {
-    public class Main : IPlugin, ISettingProvider
+    public class Main : IPlugin, ISettingProvider, IContextMenu
     {
         private PluginInitContext _context;
         private string _iconPath;
         private int _beginTypeDelay;
+        private string _pasterPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Paster", "Paster.exe");
 
         public string Name => "ClipboardManager";
 
@@ -92,8 +98,43 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     }));
                     return true;
                 },
+                ContextData = item,
             };
 
+        [DllImport("User32.dll")]
+        static extern int SetForegroundWindow(IntPtr point);
+
+        [DllImport("User32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
+        {
+            return new List<ContextMenuResult>
+            {
+                new()
+                {
+                    Title = "Run as administrator (Ctrl+Shift+Enter)",
+                    Glyph = "\xE7EF",
+                    FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
+                    AcceleratorKey = Key.Enter,
+                    AcceleratorModifiers = ModifierKeys.Control | ModifierKeys.Shift,
+                    PluginName = Name,
+                    Action = _ =>
+                    {
+                        Clipboard.SetHistoryItemAsContent((ClipboardHistoryItem)selectedResult.ContextData);
+                        Task.Run(() => RunAsSTAThread(() =>
+                        {
+                            Thread.Sleep(_beginTypeDelay);
+                            var foregroundWindow = GetForegroundWindow();
+                            Helper.OpenInShell(_pasterPath, runAs: Helper.ShellRunAsType.Administrator, runWithHiddenWindow: true);
+                            SetForegroundWindow(foregroundWindow);
+                        }));
+
+                        return true;
+                    },
+                },
+            };
+        }
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
         {
             UpdateIconPath(newTheme);

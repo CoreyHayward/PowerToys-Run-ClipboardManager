@@ -5,6 +5,8 @@ $projectDirectory = "$PSScriptRoot\Community.PowerToys.Run.Plugin.ClipboardManag
 $version = $xml.Project.PropertyGroup.Version
 $version = "$version".Trim()
 
+$pasterReleaseDirectory = "$PSScriptRoot\Paster\bin\Release\net8.0-windows"
+
 foreach ($platform in "ARM64", "x64")
 {
     if (Test-Path -Path "$projectDirectory\bin")
@@ -19,8 +21,11 @@ foreach ($platform in "ARM64", "x64")
 
     dotnet build $projectDirectory.sln -c Release /p:Platform=$platform
 
+    $releaseDirectory = "$projectDirectory\bin\$platform\Release"
     Remove-Item -Path "$projectDirectory\bin\*" -Recurse -Include *.xml, *.pdb, PowerToys.*, Wox.*
-    Rename-Item -Path "$projectDirectory\bin\$platform\Release" -NewName "ClipboardManager"
+    New-Item -ItemType Directory -Force -Path $releaseDirectory\Paster
+    Copy-Item -Path $pasterReleaseDirectory\* -Destination $releaseDirectory\Paster -Recurse
+    Rename-Item -Path $releaseDirectory -NewName "ClipboardManager"
 
     Compress-Archive -Path "$projectDirectory\bin\$platform\ClipboardManager" -DestinationPath "$PSScriptRoot\ClipboardManager-$version-$platform.zip"
 }

@@ -5,22 +5,42 @@ VisualStudioVersion = 17.9.34407.89
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.PowerToys.Run.Plugin.ClipboardManager", "Community.PowerToys.Run.Plugin.ClipboardManager\Community.PowerToys.Run.Plugin.ClipboardManager.csproj", "{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paster", "Paster\Paster.csproj", "{9D61896E-F12E-49B3-9EEE-4F56112B6964}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|Any CPU.Build.0 = Debug|x64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|ARM64.Build.0 = Debug|ARM64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|x64.ActiveCfg = Debug|x64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Debug|x64.Build.0 = Debug|x64
+		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|Any CPU.ActiveCfg = Release|x64
+		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|Any CPU.Build.0 = Release|x64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|ARM64.ActiveCfg = Release|ARM64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|ARM64.Build.0 = Release|ARM64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|x64.ActiveCfg = Release|x64
 		{31F5AF39-CBD7-4BA8-920D-1DCF39749B71}.Release|x64.Build.0 = Release|x64
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|ARM64.Build.0 = Release|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D61896E-F12E-49B3-9EEE-4F56112B6964}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
