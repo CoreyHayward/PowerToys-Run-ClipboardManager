@@ -7,6 +7,7 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 ## Requirements
 
 - PowerToys minimum version 0.77.0
+- Windows Clipboard History enabled `Windows key + V`
 
 ## Installation
 
