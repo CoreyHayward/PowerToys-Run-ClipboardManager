@@ -3,6 +3,7 @@
 
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
+using Microsoft.Win32;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -50,8 +51,18 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
         public List<Result> Query(Query query)
         {
-            var results = new List<Result>();
+            if (!Clipboard.IsHistoryEnabled())
+            {
+                return [GetHistoryDisabledResult()];
+            }
+
             var clipboardTextItems = GetTextItemsFromClipboardHistory();
+            if (clipboardTextItems.Count == 0)
+            {
+                return [GetNoItemsResult()];
+            }
+
+            var results = new List<Result>();
             if (!string.IsNullOrWhiteSpace(query?.Search))
             {
                 foreach (var item in clipboardTextItems)
@@ -82,7 +93,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             return clipboardTextItems;
         }
 
-        private Result CreateResult(ClipboardHistoryItem item, string text) 
+        private Result CreateResult(ClipboardHistoryItem item, string text)
             => new Result()
             {
                 Title = text.Trim(),
@@ -101,6 +112,37 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 ContextData = item,
             };
 
+        private Result GetHistoryDisabledResult()
+            => new Result()
+            {
+                Title = "Clipboard History is not enabled",
+                SubTitle = "Select this option to enable clipboard history",
+                IcoPath = _iconPath,
+                Action = (context) =>
+                {
+                    try
+                    {
+                        var clipboardKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Clipboard", true);
+                        clipboardKey!.SetValue("EnableClipboardHistory", "1", RegistryValueKind.DWord);
+                        _context.API.ChangeQuery(_context.CurrentPluginMetadata.ActionKeyword, true);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError("Error occurred enabling the clipboard history.", ex);
+                        return false;
+                    }
+                }
+            };
+
+        private Result GetNoItemsResult()
+            => new Result()
+            {
+                Title = "There's nothing here...",
+                SubTitle = "There are no items in your clipboard history. Copy some text to see it here.",
+                IcoPath = _iconPath
+            };
+
         [DllImport("User32.dll")]
         static extern int SetForegroundWindow(IntPtr point);
 
@@ -109,6 +151,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
         public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
         {
+            if (selectedResult.ContextData is null)
+            {
+                return [];
+            }
+
             return new List<ContextMenuResult>
             {
                 new()
