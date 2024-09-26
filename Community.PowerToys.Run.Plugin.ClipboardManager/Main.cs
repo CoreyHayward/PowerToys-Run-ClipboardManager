@@ -65,6 +65,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             var results = new List<Result>();
             if (!string.IsNullOrWhiteSpace(query?.Search))
             {
+                if (query.Search == "-")
+                {
+                    results.Add(GetClearHistoryResult(query));
+                }
+
                 foreach (var item in clipboardTextItems)
                 {
                     var text = RunSync(async () => await item.Content.GetTextAsync());
@@ -141,6 +146,20 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 Title = "There's nothing here...",
                 SubTitle = "There are no items in your clipboard history. Copy some text to see it here.",
                 IcoPath = _iconPath
+            };
+
+        private Result GetClearHistoryResult(Query query)
+            => new Result()
+            {
+                Title = "Clear clipboard history",
+                SubTitle = "This will remove all entries from the clipboard history",
+                IcoPath = _iconPath,
+                Action = (context) =>
+                {
+                    Clipboard.ClearHistory();
+                    _context.API.ChangeQuery(query.ActionKeyword, true);
+                    return true;
+                }
             };
 
         [DllImport("User32.dll")]

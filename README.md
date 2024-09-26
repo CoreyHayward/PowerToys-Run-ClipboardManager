@@ -22,3 +22,7 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 - Input: "c: <search query>"
 - Select the result (ENTER)
 - \<text\> is pasted into the selected location
+
+### Clear Clipboard History
+To clear clipboard history you can use the following shortcut:
+- "c:-"
