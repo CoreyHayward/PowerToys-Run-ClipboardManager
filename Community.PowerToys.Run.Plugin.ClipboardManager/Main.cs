@@ -93,7 +93,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
         private List<ClipboardHistoryItem> GetTextItemsFromClipboardHistory()
         {
-            var clipboardHistoryResult = RunSync(async () => await Clipboard.GetHistoryItemsAsync());
+            var clipboardHistoryResult = Clipboard.GetHistoryItemsAsync().GetAwaiter().GetResult();
             var clipboardTextItems = clipboardHistoryResult.Items.Where(x => x.Content.Contains(StandardDataFormats.Text)).ToList();
             return clipboardTextItems;
         }

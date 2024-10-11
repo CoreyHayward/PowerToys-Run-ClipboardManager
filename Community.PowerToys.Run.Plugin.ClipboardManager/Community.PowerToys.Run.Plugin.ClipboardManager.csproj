@@ -2,17 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+	  <WindowsSdkPackageVersion>10.0.20348.38</WindowsSdkPackageVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Community.PowerToys.Run.Plugin.ClipboardManager</RootNamespace>
     <AssemblyName>Community.PowerToys.Run.Plugin.ClipboardManager</AssemblyName>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Platforms>x64;ARM64</Platforms>
-    <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
 	<EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
 
