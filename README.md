@@ -1,6 +1,6 @@
 <div align="center">
 
-# PowerToys Run: ClipboardManager plugin
+# PowerToys Run: Clipboard Manager
   
 [![GitHub release](https://img.shields.io/github/v/release/CoreyHayward/PowerToys-Run-ClipboardManager?style=flat-square)](https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/CoreyHayward/PowerToys-Run-ClipboardManager/total?style=flat-square)](https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager/releases/)
