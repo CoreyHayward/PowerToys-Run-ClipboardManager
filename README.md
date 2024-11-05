@@ -35,3 +35,8 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 ### Clear Clipboard History
 To clear clipboard history you can use the following shortcut:
 - "c:-"
+
+## Configuration
+The paste behaviour can be changed via the settings to either:
+- Directly paste the contents (Default)
+- Copy the selected item to the clipboard
