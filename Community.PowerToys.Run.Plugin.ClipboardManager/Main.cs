@@ -45,7 +45,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 DisplayLabel = "Paste Behaviour",
                 DisplayDescription = "Sets what selecting a value will do",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Combobox,
-                ComboBoxItems = PasteBehaviour.GetAll().ToDictionary(x => x.Id.ToString(), x => x.Name).ToList(),
+                ComboBoxItems = PasteBehaviour.GetAll().ToDictionary(x => x.Name, x => x.Id.ToString()).ToList(),
                 ComboBoxValue = PasteBehaviour.DirectPaste.Id,
             }
         };
