@@ -19,12 +19,13 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
     {
         private PluginInitContext _context;
         private string _iconPath;
+        private bool _directPaste;
         private int _beginTypeDelay;
         private string _pasterPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Paster", "Paster.exe");
 
         public string Name => "ClipboardManager";
 
-        public string Description => "Searches the clipboard history and pastes the selected item.";
+        public string Description => "Searches the clipboard history and pastes the selected item";
 
         public static string PluginID => "2d9351ea495848d98f4771c27ac211e4";
 
@@ -34,10 +35,19 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             {
                 Key = "PasteDelay",
                 DisplayLabel = "Paste Delay (ms)",
-                DisplayDescription = "Sets how long in milliseconds to wait before paste occurs.",
+                DisplayDescription = "Sets how long in milliseconds to wait before paste occurs",
                 NumberValue = 200,
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
             },
+            new PluginAdditionalOption()
+            {
+                Key = "PasteBehaviour",
+                DisplayLabel = "Paste Behaviour",
+                DisplayDescription = "Sets what selecting a value will do",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Combobox,
+                ComboBoxItems = PasteBehaviour.GetAll().ToDictionary(x => x.Id.ToString(), x => x.Name).ToList(),
+                ComboBoxValue = PasteBehaviour.DirectPaste.Id,
+            }
         };
 
         public void Init(PluginInitContext context)
@@ -102,11 +112,16 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             => new Result()
             {
                 Title = text.Trim(),
-                SubTitle = "Paste this value.",
+                SubTitle = "Paste this value",
                 IcoPath = _iconPath,
                 Action = (context) =>
                 {
                     Clipboard.SetHistoryItemAsContent(item);
+                    if (!_directPaste)
+                    {
+                        return true;
+                    }
+
                     Task.Run(() => RunAsSTAThread(() =>
                     {
                         Thread.Sleep(_beginTypeDelay);
@@ -134,7 +149,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError("Error occurred enabling the clipboard history.", ex);
+                        Logger.LogError("Error occurred enabling the clipboard history", ex);
                         return false;
                     }
                 }
@@ -188,6 +203,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     Action = _ =>
                     {
                         Clipboard.SetHistoryItemAsContent((ClipboardHistoryItem)selectedResult.ContextData);
+                        if (!_directPaste)
+                        {
+                            return true;
+                        }
+
                         Task.Run(() => RunAsSTAThread(() =>
                         {
                             Thread.Sleep(_beginTypeDelay);
@@ -231,6 +251,8 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             }
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "PasteDelay");
+            var pasteBehaviour = settings.AdditionalOptions.First(x => x.Key == "PasteBehaviour");
+            _directPaste = pasteBehaviour.ComboBoxValue == PasteBehaviour.DirectPaste.Id;
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
         }
 
