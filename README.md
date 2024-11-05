@@ -1,4 +1,13 @@
-# PowerToys Run: ClipboardManager plugin
+<div align="center">
+
+# PowerToys Run: Clipboard Manager
+  
+[![GitHub release](https://img.shields.io/github/v/release/CoreyHayward/PowerToys-Run-ClipboardManager?style=flat-square)](https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager/releases/latest)
+[![GitHub all releases](https://img.shields.io/github/downloads/CoreyHayward/PowerToys-Run-ClipboardManager/total?style=flat-square)](https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager/releases/)
+[![GitHub release (latest by date)](https://img.shields.io/github/downloads/CoreyHayward/PowerToys-Run-ClipboardManager/latest/total?style=flat-square)](https://github.com/CoreyHayward/PowerToys-Run-ClipboardManager/releases/latest)
+[![Mentioned in Awesome PowerToys Run Plugins](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/hlaueriksson/awesome-powertoys-run-plugins)
+
+</div>
 
 Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin for easily searching and pasting the clipboard history.
 
