@@ -249,6 +249,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                             DataPackage data = new();
                             data.SetText(File.ReadAllText(tempFile));
                             Clipboard.SetContent(data);
+                            File.Delete(tempFile);
                         }
                     }
                 }
