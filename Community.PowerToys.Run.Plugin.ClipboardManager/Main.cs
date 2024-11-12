@@ -219,7 +219,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 },
                 new()
                 {
-                    Title = "Edit (Ctrl+C)",
+                    Title = "Edit (Ctrl+E)",
                     Glyph = "\xE70F",
                     FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
                     AcceleratorKey = Key.E,
