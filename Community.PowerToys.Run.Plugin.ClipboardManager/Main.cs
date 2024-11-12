@@ -4,6 +4,7 @@
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
 using Wox.Infrastructure;
 using Wox.Plugin;
+using Wox.Plugin.Common.Win32;
 using Clipboard = Windows.ApplicationModel.DataTransfer.Clipboard;
 
 namespace Community.PowerToys.Run.Plugin.ClipboardManager
@@ -82,7 +84,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
                 foreach (var item in clipboardTextItems)
                 {
-                    var text = RunSync(async () => await item.Content.GetTextAsync());
+                    var text = item.Content.GetTextAsync().AsTask().Result;
                     if (text.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
                     {
                         results.Add(CreateResult(item, text));
@@ -93,7 +95,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             {
                 foreach (var item in clipboardTextItems.Take(5))
                 {
-                    var text = RunSync(async () => await item.Content.GetTextAsync());
+                    var text = item.Content.GetTextAsync().AsTask().Result;
                     results.Add(CreateResult(item, text));
                 }
             }
@@ -178,9 +180,6 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             };
 
         [DllImport("User32.dll")]
-        static extern int SetForegroundWindow(IntPtr point);
-
-        [DllImport("User32.dll")]
         static extern IntPtr GetForegroundWindow();
 
         public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
@@ -199,7 +198,6 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
                     AcceleratorKey = Key.Enter,
                     AcceleratorModifiers = ModifierKeys.Control | ModifierKeys.Shift,
-                    PluginName = Name,
                     Action = _ =>
                     {
                         Clipboard.SetHistoryItemAsContent((ClipboardHistoryItem)selectedResult.ContextData);
@@ -213,12 +211,48 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                             Thread.Sleep(_beginTypeDelay);
                             var foregroundWindow = GetForegroundWindow();
                             Helper.OpenInShell(_pasterPath, runAs: Helper.ShellRunAsType.Administrator, runWithHiddenWindow: true);
-                            SetForegroundWindow(foregroundWindow);
+                            NativeMethods.SetForegroundWindow(foregroundWindow);
                         }));
 
                         return true;
                     },
                 },
+                new()
+                {
+                    Title = "Edit (Ctrl+E)",
+                    Glyph = "\xE70F",
+                    FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
+                    AcceleratorKey = Key.E,
+                    AcceleratorModifiers = ModifierKeys.Control,
+                    Action = c =>
+                    {
+                        _ = EditAsync(selectedResult);
+
+                        return true;
+
+                        static async Task EditAsync(Result selectedResult)
+                        {
+                            var clipboard = (ClipboardHistoryItem)selectedResult.ContextData;
+                            var tempFile = Path.GetTempFileName();
+                            File.WriteAllText(tempFile, await clipboard.Content.GetTextAsync());
+                            Process process = new()
+                            {
+                                StartInfo =
+                                {
+                                    FileName = tempFile,
+                                    UseShellExecute = true,
+                                }
+                            };
+                            process.Start();
+                            process.WaitForExit();
+
+                            DataPackage data = new();
+                            data.SetText(File.ReadAllText(tempFile));
+                            Clipboard.SetContent(data);
+                            File.Delete(tempFile);
+                        }
+                    }
+                }
             };
         }
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
@@ -272,11 +306,6 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             @event.WaitOne();
-        }
-
-        private T RunSync<T>(Func<Task<T>> func)
-        {
-            return Task.Run(func).GetAwaiter().GetResult();
         }
     }
 }
