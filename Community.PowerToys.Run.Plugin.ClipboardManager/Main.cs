@@ -9,7 +9,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using Windows.ApplicationModel.DataTransfer;
 using Wox.Infrastructure;
 using Wox.Plugin;
 using Wox.Plugin.Common.Win32;
@@ -19,8 +18,9 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 {
     public class Main : IPlugin, ISettingProvider, IContextMenu
     {
+        private ClipboardManager _clipboardManager = new();
         private PluginInitContext _context;
-        private string _iconPath;
+        private string _iconPath = "Images/ClipboardManager.light.png";
         private bool _directPaste;
         private int _beginTypeDelay;
         private string _pasterPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Paster", "Paster.exe");
@@ -68,49 +68,33 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 return [GetHistoryDisabledResult()];
             }
 
-            var clipboardTextItems = GetTextItemsFromClipboardHistory();
+            var clipboardTextItems = _clipboardManager.ClipboardItems;
             if (clipboardTextItems.Count == 0)
             {
                 return [GetNoItemsResult()];
             }
 
+            if (string.IsNullOrWhiteSpace(query?.Search))
+            {
+                return clipboardTextItems.Take(5).Select(CreateResult).ToList();
+            }
+
             var results = new List<Result>();
-            if (!string.IsNullOrWhiteSpace(query?.Search))
+            if (query.Search == "-")
             {
-                if (query.Search == "-")
-                {
-                    results.Add(GetClearHistoryResult(query));
-                }
-
-                foreach (var item in clipboardTextItems)
-                {
-                    var text = item.Content.GetTextAsync().AsTask().Result;
-                    if (text.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
-                    {
-                        results.Add(CreateResult(item, text));
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in clipboardTextItems.Take(5))
-                {
-                    var text = item.Content.GetTextAsync().AsTask().Result;
-                    results.Add(CreateResult(item, text));
-                }
+                results.Add(GetClearHistoryResult(query));
             }
 
+            var matchingItems =
+                clipboardTextItems
+                    .Where(x => x.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
+                    .Select(CreateResult);
+
+            results.AddRange(matchingItems);
             return results;
         }
 
-        private List<ClipboardHistoryItem> GetTextItemsFromClipboardHistory()
-        {
-            var clipboardHistoryResult = Clipboard.GetHistoryItemsAsync().GetAwaiter().GetResult();
-            var clipboardTextItems = clipboardHistoryResult.Items.Where(x => x.Content.Contains(StandardDataFormats.Text)).ToList();
-            return clipboardTextItems;
-        }
-
-        private Result CreateResult(ClipboardHistoryItem item, string text)
+        private Result CreateResult(string text)
             => new Result()
             {
                 Title = text.Trim(),
@@ -118,7 +102,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 IcoPath = _iconPath,
                 Action = (context) =>
                 {
-                    Clipboard.SetHistoryItemAsContent(item);
+                    ClipboardManager.SetStringAsClipboardContent(text);
                     if (!_directPaste)
                     {
                         return true;
@@ -131,7 +115,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     }));
                     return true;
                 },
-                ContextData = item,
+                ContextData = text,
             };
 
         private Result GetHistoryDisabledResult()
@@ -173,7 +157,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 IcoPath = _iconPath,
                 Action = (context) =>
                 {
-                    Clipboard.ClearHistory();
+                    _clipboardManager.ClearHistory();
                     _context.API.ChangeQuery(query.ActionKeyword, true);
                     return true;
                 }
@@ -200,7 +184,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     AcceleratorModifiers = ModifierKeys.Control | ModifierKeys.Shift,
                     Action = _ =>
                     {
-                        Clipboard.SetHistoryItemAsContent((ClipboardHistoryItem)selectedResult.ContextData);
+                        ClipboardManager.SetStringAsClipboardContent((string)selectedResult.ContextData);
                         if (!_directPaste)
                         {
                             return true;
@@ -232,9 +216,9 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
                         static async Task EditAsync(Result selectedResult)
                         {
-                            var clipboard = (ClipboardHistoryItem)selectedResult.ContextData;
+                            var text = (string)selectedResult.ContextData;
                             var tempFile = Path.GetTempFileName();
-                            File.WriteAllText(tempFile, await clipboard.Content.GetTextAsync());
+                            File.WriteAllText(tempFile, text);
                             Process process = new()
                             {
                                 StartInfo =
@@ -246,15 +230,14 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                             process.Start();
                             process.WaitForExit();
 
-                            DataPackage data = new();
-                            data.SetText(File.ReadAllText(tempFile));
-                            Clipboard.SetContent(data);
+                            ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
                             File.Delete(tempFile);
                         }
                     }
                 }
             };
         }
+
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
         {
             UpdateIconPath(newTheme);
@@ -264,12 +247,10 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
         {
             if (theme == Theme.Light || theme == Theme.HighContrastWhite)
             {
-                _iconPath = "Images/ClipboardManager.light.png";
+                return;
             }
-            else
-            {
-                _iconPath = "Images/ClipboardManager.dark.png";
-            }
+
+            _iconPath = "Images/ClipboardManager.dark.png";
         }
 
         public System.Windows.Controls.Control CreateSettingPanel()
