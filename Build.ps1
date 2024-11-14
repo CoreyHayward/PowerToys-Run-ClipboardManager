@@ -24,7 +24,7 @@ foreach ($platform in "ARM64", "x64")
     $releaseDirectory = "$projectDirectory\bin\$platform\Release"
     Remove-Item -Path "$projectDirectory\bin\*" -Recurse -Include *.xml, *.pdb, PowerToys.*, Wox.*, WinRT*, Microsoft*
     New-Item -ItemType Directory -Force -Path $releaseDirectory\Paster
-    Copy-Item -Path $pasterReleaseDirectory\* -Destination $releaseDirectory\Paster -Recurse
+    Copy-Item -Path $pasterReleaseDirectory\Paster.exe -Destination $releaseDirectory\Paster -Recurse
     Rename-Item -Path $releaseDirectory -NewName "ClipboardManager"
 
     Compress-Archive -Path "$projectDirectory\bin\$platform\ClipboardManager" -DestinationPath "$PSScriptRoot\ClipboardManager-$version-$platform.zip"

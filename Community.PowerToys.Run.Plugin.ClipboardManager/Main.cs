@@ -216,10 +216,10 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
                         static async Task EditAsync(Result selectedResult, PluginInitContext context)
                         {
+                            var text = (string)selectedResult.ContextData;
+                            var tempFile = Path.GetTempFileName();
+                            File.WriteAllText(tempFile, text);
                             await Task.Run(() => {
-                                var text = (string)selectedResult.ContextData;
-                                var tempFile = Path.GetTempFileName();
-                                File.WriteAllText(tempFile, text);
                                 Process process = new()
                                 {
                                     StartInfo =
@@ -230,11 +230,10 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                                 };
                                 process.Start();
                                 process.WaitForExit();
-
-                                ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
-                                File.Delete(tempFile);
-                                context.API.ChangeQuery(context.CurrentPluginMetadata.ActionKeyword);
                             });
+
+                            ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
+                            File.Delete(tempFile);
                         }
                     }
                 }
