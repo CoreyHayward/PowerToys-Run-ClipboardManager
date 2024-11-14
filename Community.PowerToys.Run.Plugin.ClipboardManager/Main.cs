@@ -210,28 +210,31 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     AcceleratorModifiers = ModifierKeys.Control,
                     Action = c =>
                     {
-                        _ = EditAsync(selectedResult);
+                        _ = EditAsync(selectedResult, _context);
 
                         return true;
 
-                        static async Task EditAsync(Result selectedResult)
+                        static async Task EditAsync(Result selectedResult, PluginInitContext context)
                         {
-                            var text = (string)selectedResult.ContextData;
-                            var tempFile = Path.GetTempFileName();
-                            File.WriteAllText(tempFile, text);
-                            Process process = new()
-                            {
-                                StartInfo =
+                            await Task.Run(() => {
+                                var text = (string)selectedResult.ContextData;
+                                var tempFile = Path.GetTempFileName();
+                                File.WriteAllText(tempFile, text);
+                                Process process = new()
                                 {
-                                    FileName = tempFile,
-                                    UseShellExecute = true,
-                                }
-                            };
-                            process.Start();
-                            process.WaitForExit();
+                                    StartInfo =
+                                    {
+                                        FileName = tempFile,
+                                        UseShellExecute = true,
+                                    }
+                                };
+                                process.Start();
+                                process.WaitForExit();
 
-                            ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
-                            File.Delete(tempFile);
+                                ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
+                                File.Delete(tempFile);
+                                context.API.ChangeQuery(context.CurrentPluginMetadata.ActionKeyword);
+                            });
                         }
                     }
                 }
