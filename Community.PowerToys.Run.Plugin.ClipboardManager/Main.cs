@@ -210,11 +210,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                     AcceleratorModifiers = ModifierKeys.Control,
                     Action = c =>
                     {
-                        _ = EditAsync(selectedResult, _context);
+                        _ = EditAsync(selectedResult);
 
                         return true;
 
-                        static async Task EditAsync(Result selectedResult, PluginInitContext context)
+                        static async Task EditAsync(Result selectedResult)
                         {
                             var text = (string)selectedResult.ContextData;
                             var tempFile = Path.GetTempFileName();
