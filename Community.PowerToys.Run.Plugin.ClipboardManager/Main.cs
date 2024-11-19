@@ -219,16 +219,18 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                             var text = (string)selectedResult.ContextData;
                             var tempFile = Path.GetTempFileName();
                             File.WriteAllText(tempFile, text);
-                            Process process = new()
-                            {
-                                StartInfo =
+                            await Task.Run(() => {
+                                Process process = new()
                                 {
-                                    FileName = tempFile,
-                                    UseShellExecute = true,
-                                }
-                            };
-                            process.Start();
-                            process.WaitForExit();
+                                    StartInfo =
+                                    {
+                                        FileName = tempFile,
+                                        UseShellExecute = true,
+                                    }
+                                };
+                                process.Start();
+                                process.WaitForExit();
+                            });
 
                             ClipboardManager.SetStringAsClipboardContent(File.ReadAllText(tempFile));
                             File.Delete(tempFile);
