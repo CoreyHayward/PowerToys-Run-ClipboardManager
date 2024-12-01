@@ -97,7 +97,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
         private Result CreateResult(string text)
             => new Result()
             {
-                Title = text.Trim(),
+                Title = text.Split(Environment.NewLine, 2, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).First(),
                 SubTitle = "Paste this value",
                 IcoPath = _iconPath,
                 Action = (context) =>
