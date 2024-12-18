@@ -76,7 +76,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
             if (string.IsNullOrWhiteSpace(query?.Search))
             {
-                return clipboardTextItems.Take(5).Select(CreateResult).ToList();
+                return clipboardTextItems.Select(CreateResult).ToList();
             }
 
             var results = new List<Result>();
