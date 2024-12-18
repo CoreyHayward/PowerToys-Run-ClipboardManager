@@ -23,6 +23,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
         private string _iconPath = "Images/ClipboardManager.light.png";
         private bool _directPaste;
         private int _beginTypeDelay;
+        private int _maxResults;
         private string _pasterPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Paster", "Paster.exe");
 
         public string Name => "ClipboardManager";
@@ -49,6 +50,15 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Combobox,
                 ComboBoxItems = PasteBehaviour.GetAll().ToDictionary(x => x.Name, x => x.Id.ToString()).ToList(),
                 ComboBoxValue = PasteBehaviour.DirectPaste.Id,
+            },
+            new PluginAdditionalOption()
+            {
+                Key = "MaxResults",
+                DisplayLabel = "Maximum Results",
+                DisplayDescription = "Sets the maximum number of results to show",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
+                NumberValue = -1,
+                NumberBoxMin = -1,
             }
         };
 
@@ -76,7 +86,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
 
             if (string.IsNullOrWhiteSpace(query?.Search))
             {
-                return clipboardTextItems.Select(CreateResult).ToList();
+                return clipboardTextItems.Take(_maxResults == -1 ? clipboardTextItems.Count : _maxResults).Select(CreateResult).ToList();
             }
 
             var results = new List<Result>();
@@ -88,6 +98,7 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             var matchingItems =
                 clipboardTextItems
                     .Where(x => x.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
+                    .Take(_maxResults == -1 ? clipboardTextItems.Count : _maxResults)
                     .Select(CreateResult);
 
             results.AddRange(matchingItems);
@@ -268,9 +279,11 @@ namespace Community.PowerToys.Run.Plugin.ClipboardManager
             }
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "PasteDelay");
+            var maxResults = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "MaxResults");
             var pasteBehaviour = settings.AdditionalOptions.First(x => x.Key == "PasteBehaviour");
             _directPaste = pasteBehaviour.ComboBoxValue == PasteBehaviour.DirectPaste.Id;
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
+            _maxResults = (int)(maxResults?.NumberValue ?? -1);
         }
 
         /// <summary>
