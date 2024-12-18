@@ -40,3 +40,7 @@ To clear clipboard history you can use the following shortcut:
 The paste behaviour can be changed via the settings to either:
 - Directly paste the contents (Default)
 - Copy the selected item to the clipboard
+
+The maximum number of results can be changed via the settings to either:
+- Unlimited Results: -1
+- Limited Results: Number
